@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Object Autofill Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-panel">
+            <h2 class="panel-title">Business Object Form</h2>
+            <div class="form-container">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="codice">Codice</label>
+                        <input type="number" id="codice" name="codice" placeholder="Inserisci codice">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descrizione">Descrizione</label>
+                        <input type="text" id="descrizione" name="descrizione" placeholder="Inserisci descrizione">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantita">Quantita</label>
+                        <input type="number" id="quantita" name="quantita" placeholder="Inserisci quantita">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prezzo">Prezzo</label>
+                        <input type="number" id="prezzo" name="prezzo" placeholder="Inserisci prezzo">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="resetBtn">Reset Form</button>
+                        <button type="submit" class="btn-primary">Submit Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="chat-panel">
+            <div class="chat-header">
+                <h2>Autofill Chatbot</h2>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    Ciao! Scrivi un comando come "metti quantita 5" o "scrivi descrizione test" e provo a compilare il form.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="userInput" placeholder="Scrivi un comando...">
+                <div class="send-btn" id="sendBtn">
+                    <span class="send-icon">&gt;</span>
+                </div>
+            </div>
+
+            <div class="info-text">
+                Natural language query -> grammar parser -> optional LLM fallback
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
