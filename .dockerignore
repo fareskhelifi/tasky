@@ -1,0 +1,9 @@
+.git
+.github
+.env
+backend/.env
+node_modules
+backend/node_modules
+backend/docs
+npm-debug.log*
+*.log

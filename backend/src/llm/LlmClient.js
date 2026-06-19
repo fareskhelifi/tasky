@@ -1,20 +1,9 @@
 class LlmClient {
-  constructor({
-    endpoint,
-    apiKey,
-    models = [],
-    timeoutMs = 12000,
-    chatCompletionsPath = "/chat/completions",
-  } = {}) {
+  constructor({ endpoint, apiKey, models, timeoutMs }) {
     this.endpoint = endpoint ? endpoint.replace(/\/$/, "") : "";
     this.apiKey = apiKey;
-    this.models = models.length
-      ? models
-      : ["gemma4:e4b", "qwen3.5:2b"];
-    this.timeoutMs = Number(timeoutMs) || 12000;
-    this.chatCompletionsPath = chatCompletionsPath.startsWith("/")
-      ? chatCompletionsPath
-      : `/${chatCompletionsPath}`;
+    this.models = models;
+    this.timeoutMs = timeoutMs;
   }
 
   debugLog(...args) {
@@ -33,7 +22,7 @@ class LlmClient {
     let response;
 
     try {
-      response = await fetch(`${this.endpoint}${this.chatCompletionsPath}`, {
+      response = await fetch(`${this.endpoint}/chat/completions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +33,7 @@ class LlmClient {
         body: JSON.stringify({
           model,
           temperature: 0,
-          max_tokens: 40,
+          max_tokens: 80,
           messages: [
             {
               role: "system",
@@ -87,19 +76,46 @@ class LlmClient {
     return this.extractQuery(content);
   }
 
-  buildSystemPrompt(fields) {
-    const fieldList = fields
-      .map((field) => `${field.name}:${field.type}`)
-      .join(", ");
+    buildSystemPrompt(fields) {
+      const fieldList = fields
+        .map((field) => `- ${field.name}: ${field.type}`)
+        .join("\n");
 
-    return [
-      "Rewrite Italian user text into one grammar command.",
-      "Use only: metti, scrivi, riempi, compila.",
-      `Fields: ${fieldList}.`,
-      "Keep values unchanged. Do not invent fields or values.",
-      "Return only JSON: {\"query\":\"metti quantita 5\"}",
-    ].join("\n");
-  }
+      var result = [
+        "Rewrite the user's Italian message into the shortest command accepted by the BO grammar parser.",
+        "Return a command only for form-field compilation. Do not answer the user.",
+        "",
+        "Accepted compile grammar:",
+        "- optional verb + field + value: metti quantita 5",
+        "- field + con il valore + value: quantita con il valore 5",
+        "- field + e/è + value: quantita è 5",
+        "- value + in/nel + field: 5 in quantita",
+        "",
+        "Accepted verbs include: compila, compilami, metti, mettimi, scrivi, scrivimi, riempi, riempimi.",
+        "Use only exact field names from the list.",
+        "Preserve the user's value exactly; do not translate, normalize, calculate, round, or invent values.",
+        "For number fields, keep numeric digits as written by the user.",
+        "For string fields, keep the original words after the field name.",
+        "If the message has an unknown field, no field, or no value, return an empty query.",
+        "",
+        "Available fields:",
+        fieldList,
+        "",
+        "Return only minified JSON in this exact shape:",
+        "{\"query\":\"metti quantita 5\"}",
+        "",
+        "Examples:",
+        "input: imposta la quantita a 5",
+        "output: {\"query\":\"metti quantita 5\"}",
+        "input: il codice deve essere 20",
+        "output: {\"query\":\"metti codice 20\"}",
+        "input: descrizione uguale prova tecnica",
+        "output: {\"query\":\"descrizione è prova tecnica\"}",
+        "input: apri il tab successivo",
+        "output: {\"query\":\"\"}",
+      ].join("\n");
+      return result;
+    }
 
 
   extractQuery(content) {

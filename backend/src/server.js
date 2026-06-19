@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const path = require("path");
 const express = require("express");
 const fieldDefinitions = require("./config/fieldDefinitions");
@@ -10,8 +8,10 @@ const createChatRouter = require("./routes/chatRoutes");
 
 function createServer() {
   const app = express();
+  const frontendDirectory = path.resolve(__dirname, "..", "..", "frontend");
 
   const grammarEngine = new GrammarEngine({ fields: fieldDefinitions });
+
   const llmClient = new LlmClient({
     endpoint: process.env.LLM_ENDPOINT,
     apiKey: process.env.LLM_API_KEY,
@@ -19,9 +19,9 @@ function createServer() {
       .split(",")
       .map((model) => model.trim())
       .filter(Boolean),
-    timeoutMs: process.env.LLM_TIMEOUT_MS,
-    chatCompletionsPath: process.env.LLM_CHAT_COMPLETIONS_PATH,
+    timeoutMs: Number(process.env.LLM_TIMEOUT_MS) || 12000,
   });
+
   const autofillService = new AutofillService({
     grammarEngine,
     llmClient,
@@ -29,11 +29,11 @@ function createServer() {
   });
 
   app.use(express.json());
-  app.use(express.static(path.join(process.cwd(), "frontend")));
+  app.use(express.static(frontendDirectory));
   app.use("/api", createChatRouter({ autofillService }));
 
   app.get("/", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "frontend", "app.html"));
+    res.sendFile(path.join(frontendDirectory, "app.html"));
   });
 
   app.use((error, req, res, next) => {
