@@ -2,7 +2,10 @@ const path = require("path");
 const BrowserGrammarLoader = require("./BrowserGrammarLoader");
 
 class GrammarEngine {
-  constructor({ fields, grammarDirectory = path.join(process.cwd(), "grammar") }) {
+  constructor({
+    fields,
+    grammarDirectory = path.resolve(__dirname, "..", "..", "grammar"),
+  }) {
     this.fields = fields;
     this.context = new BrowserGrammarLoader(grammarDirectory).load();
     this.configureBusinessObjectGrammar();

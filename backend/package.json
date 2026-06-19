@@ -2,9 +2,10 @@
   "name": "tasky-prima-prova",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "check:llm": "node scripts/check-llm.js"
   },
   "keywords": [],

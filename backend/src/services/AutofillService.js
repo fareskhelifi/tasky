@@ -33,6 +33,7 @@ class AutofillService {
         });
 
         if (!reformulatedQuery) {
+          console.warn(`Model ${model} did not return a reformulated query.`);
           continue;
         }
 
